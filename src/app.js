@@ -2,14 +2,20 @@ import dotenv from 'dotenv';
 import express from 'express';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
-import { isInvalid } from './lib/template-helpers.js';
+//import { isInvalid } from './lib/template-helpers.js';
 import { indexRouter } from './routes/index-routes.js';
 
 dotenv.config();
 
-const { PORT: port = 3000 } = process.env;
+const { PORT: port = 3001 } = process.env;
 
 const app = express();
+
+app.get('/', (req, res) => {
+  console.info('request to /');
+  res.send('Hello World!');
+});
+
 
 // Sér um að req.body innihaldi gögn úr formi
 app.use(express.urlencoded({ extended: true }));

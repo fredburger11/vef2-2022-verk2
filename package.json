@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "node ./src/build.js && cpy public dist",
     "dev": "dotenv -e .env -- nodemon ./src/app.js",
     "start": "dotenv -e .env node ./src/app.js",
     "setup": "dotenv -e .env node ./src/setup.js",
