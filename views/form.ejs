@@ -1,0 +1,36 @@
+<%- include('header') -%>
+
+<form method="post" action="/post" enctype="application/x-www-form-urlencoded">
+
+  <div class="field<%= locals.isInvalid('name', errors) ?  ' field--invalid' : '' %>">
+    <label for="name">Nafn*</label>
+    <input type="text" name="name" id="name" value="<%= data.name %>" class="">
+  </div>
+
+  <div class="field<%= locals.isInvalid('email', errors) ?  ' field--invalid' : '' %>">
+    <label for="email">email*</label>
+    <input type="text" name="email" id="email" value="<%= data.email %>" class="">
+  </div>
+
+  <div class="field<%= locals.isInvalid('nationalId', errors) ?  ' field--invalid' : '' %>">
+    <label for="nationalId">Kennitala*</label>
+    <input type="text" name="nationalId" id="nationalId" value="<%= data.nationalId %>" class="">
+  </div>
+
+  <div class="field field--textarea<%= locals.isInvalid('comment', errors) ?  ' field--invalid' : '' %>">
+    <label for="comment">Athugasemd:</label>
+    <textarea name="comment" id="comment"><%= data.comment %></textarea>
+  </div>
+
+  <% if (errors.length > 0) { %>
+    <h2 class="errors__title">Villur við skráningu:</h2>
+    <ul class="errors">
+      <% errors.forEach((error) => { %>
+        <li class="error"><label for="<%= error.param %>"><%= error.msg %></label></li>
+      <% }); %>
+    </ul>
+  <% } %>
+
+  <button class="button button--large button--margin">Skrifa undir</button>
+</form>
+<%- include('footer') -%>

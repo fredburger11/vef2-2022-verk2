@@ -1,11 +1,10 @@
 {
   "name": "vef2-2022-v2-synilausn",
   "version": "1.0.0",
-  "description": "",
+  "description": "[Kynning á verkefni í tíma](https://youtu.be/pLwY4LiR6gc).",
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "node ./src/build.js && cpy public dist",
     "dev": "dotenv -e .env -- nodemon ./src/app.js",
     "start": "dotenv -e .env node ./src/app.js",
     "setup": "dotenv -e .env node ./src/setup.js",
@@ -30,7 +29,9 @@
     "express-validator": "^6.14.0",
     "passport": "^0.5.2",
     "passport-local": "^1.0.0",
-    "pg": "^8.7.1",
+    "pg": "^8.7.3",
+    "template-helpers": "^1.0.1",
+    "templates": "^0.13.7",
     "xss": "^1.0.10"
   },
   "devDependencies": {
@@ -45,5 +46,13 @@
     "stylelint": "^14.3.0",
     "stylelint-config-sass-guidelines": "^9.0.1",
     "stylelint-config-standard": "^24.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fredburger11/vef2-2022-verk2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fredburger11/vef2-2022-verk2/issues"
+  },
+  "homepage": "https://github.com/fredburger11/vef2-2022-verk2#readme"
 }
