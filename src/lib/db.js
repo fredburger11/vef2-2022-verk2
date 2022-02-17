@@ -1,11 +1,16 @@
 import { readFile } from 'fs/promises';
 import pg from 'pg';
+import dotenv from 'dotenv';
 
 const SCHEMA_FILE = './sql/schema.sql';
 const DROP_SCHEMA_FILE = './sql/drop.sql';
 
-const { DATABASE_URL: connectionString, NODE_ENV: nodeEnv = 'development' } =
-  process.env;
+dotenv.config();
+
+const {
+  DATABASE_URL: connectionString,
+  NODE_ENV: nodeEnv = 'development'
+} = process.env;
 
 if (!connectionString) {
   console.error('vantar DATABASE_URL í .env');
@@ -61,4 +66,31 @@ export async function end() {
   await pool.end();
 }
 
-/* TODO útfæra aðgeðir á móti gagnagrunni */
+/* TODO útfæra aðgerðir á móti gagnagrunni */
+
+export async function createComment({ name, email, nationalId, comment }) {
+  const q = `
+    INSERT INTO
+      people(name, email, nationalId, comment)
+    VALUES
+      ($1, $2, $3, $4)
+    RETURNING *`;
+  const values = [name, email, nationalId, comment];
+
+  const result = await query(q, values);
+
+  return result !== null;
+}
+
+export async function listComments() {
+  const q = 'SELECT * from people';
+
+  const result = await query(q);
+
+  if(result) {
+    return result.rows;
+  }
+
+  return [];
+}
+

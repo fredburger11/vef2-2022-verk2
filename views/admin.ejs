@@ -1,0 +1,15 @@
+<%- include('header') -%>
+
+<p>Halló admin!</p>
+
+<% if (people.length == 0) { %>
+  <p>Ekkert fólk</p>
+<% } else { %>
+  <ul>
+    <% people.forEach((comment) => { %>
+    <li><%= comment.name %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<%- include('footer') -%>

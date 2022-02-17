@@ -31,7 +31,7 @@
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
     "template-helpers": "^1.0.1",
-    "templates": "^0.13.7",
+    "templates": "^1.2.9",
     "xss": "^1.0.10"
   },
   "devDependencies": {

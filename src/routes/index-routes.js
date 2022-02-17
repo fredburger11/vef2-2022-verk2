@@ -6,7 +6,7 @@ export const indexRouter = express.Router();
 async function indexRoute(req, res) {
   const events = await listEvents();
 
-  res.render('index', {
+  res.render('form', {
     title: 'Viðburðasíðan',
     events,
   });
