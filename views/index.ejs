@@ -1,6 +1,7 @@
 <%- include('header') -%>
 
-<h1>Viðburðar umsjón</h1>
+<h1>Viðburðarsíðan</h1>
+
 <h2>Viðburðir á næstunni</h2>
 
 <% if (events.length == 0) { %>
@@ -14,8 +15,6 @@
   </ul>
 <% } %>
 
-<div class="user">
-  <p class="user__logout"><a href="/logout">Útskrá</a></p>
-</div>
+<p><a href="/login">Innskráning stjórnanda</a> </p>
 
 <%- include('footer') -%>

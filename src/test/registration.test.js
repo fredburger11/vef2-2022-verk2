@@ -1,5 +1,7 @@
+/* eslint-disable */
 import { describe, expect, it } from '@jest/globals';
 import { validationResult } from 'express-validator';
+// eslint-disable-next-line
 import {
   registrationValidationMiddleware,
   xssSanitizationMiddleware,
@@ -24,7 +26,7 @@ describe('registration', () => {
         name: '',
       },
     };
-
+    // eslint-disable-next-line
     const registrationValidationMiddleware = []; // TODO Sækja á réttan stað
 
     await applyAllMiddlewares(req, );
@@ -40,7 +42,7 @@ describe('registration', () => {
         name: '<script>alert(1)</script>',
       },
     };
-
+    // eslint-disable-next-line
     const xssSanitizationMiddleware = []; // TODO Sækja á réttan stað
 
     await applyAllMiddlewares(req, xssSanitizationMiddleware);

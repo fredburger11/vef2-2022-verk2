@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 
 import {
@@ -26,3 +27,4 @@ describe('db', () => {
     // TODO útfæra test
   });
 });
+

@@ -2,12 +2,13 @@ import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import xss from 'xss';
 import { Strategy } from 'passport-local';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import { body, validationResult } from 'express-validator';
 import { isInvalid } from './lib/template-helpers.js';
 import { indexRouter } from './routes/index-routes.js';
-import { body, validationResult } from 'express-validator';
 import { router as adminRouter } from './routes/admin-routes.js';
 import { createComment } from './lib/db.js';
 
@@ -17,7 +18,7 @@ import {
   findByUsername,
   findById,
 } from './lib/users.js';
-import xss from 'xss';
+
 
 dotenv.config();
 
@@ -27,7 +28,6 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 const {
- HOST: hostname = '127.0.0.1',
  PORT: port = 3000,
  SESSION_SECRET: sessionSecret = 'asdklfj',
  DATABASE_URL: databaseUrl,
@@ -55,6 +55,16 @@ app.use(express.static(join(path, '../public')));
 app.set('views', join(path, '../views'));
 app.set('view engine', 'ejs');
 
+/**
+ * Athugar hvort username og password sé til í notandakerfi.
+ * Callback tekur við villu sem fyrsta argument, annað argument er
+ * - `false` ef notandi ekki til eða lykilorð vitlaust
+ * - Notandahlutur ef rétt
+ *
+ * @param {string} username Notandanafn til að athuga
+ * @param {string} password Lykilorð til að athuga
+ * @param {function} done Fall sem kallað er í með niðurstöðu
+ */
 async function strat(username, password, done) {
   try {
     const user = await findByUsername(username);
@@ -94,8 +104,9 @@ passport.deserializeUser(async (id, done) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/admin', adminRouter);
 
+
+// app.use('/index', indexRouter);
 
 
 app.post(
@@ -121,10 +132,10 @@ app.get('/login', (req, res) => {
     return res.redirect('/');
   }
 
-  let message = '';
+  let message = '<p><a href="/">Til baka</a> </p>';
 
   // Athugum hvort einhver skilaboð séu til í session, ef svo er
-  //  birtum þau og hreinsum skilaboð
+  // birtum þau og hreinsum skilaboð
   if (req.session.messages && req.session.messages.length > 0) {
     message = req.session.messages.join(', ');
     req.session.messages = [];
@@ -144,13 +155,14 @@ app.get('/login', (req, res) => {
 
 app.locals.isInvalid = isInvalid;
 
-/*
+ /*
+
 app.locals = {
   // TODO hjálparföll fyrir template
 
 };*/
 
-app.get('/', (req, res) => {
+app.get('/form', (req, res) => {
 
   res.render('form', {
     title: 'Formið mitt',
@@ -158,6 +170,7 @@ app.get('/', (req, res) => {
     data: {},
   });
 });
+
 
 
 
@@ -172,7 +185,7 @@ const validation = [
     .matches(new RegExp(nationalIdPattern))
     .withMessage('Kennitala verður að vera á formi 000000-0000 eða 0000000000'),
 ];
-
+/*
 const sanitazion = [
   body('name').trim().escape(),
   body('email').normalizeEmail(),
@@ -180,18 +193,24 @@ const sanitazion = [
 
   // fyrir alla reitina!!!!!!
 ]
+*/
+const sanitazion = [
+  body('name').trim().escape(),
+  body('description').customSanitizer((value) => xss(value)),
+
+  // fyrir alla reitina!!!!!!
+]
 
 const validationResults =  (req, res, next) => {
-  const { name = '', email = '', nationalId = '', comment = '' } = req.body;
+  const { name = '', description = '' } = req.body;
 
   const result = validationResult(req);
 
   if (!result.isEmpty()) {
-    //const errorMessages = errors.array().map((i) => i.msg);
     return res.render('form', {
       title: 'Formið mitt',
       errors: result.errors,
-      data: { name, email, nationalId, comment },
+      data: { name, description },
     });
   }
 
@@ -199,9 +218,9 @@ const validationResults =  (req, res, next) => {
 }
 
 const postComment = async (req, res) => {
-  const { name, email, nationalId, comment } = req.body;
+  const { name, description } = req.body;
 
-  const created = await createComment({ name, email, nationalId, comment });
+  const created = await createComment({ name, description });
 
 if(created) {
   return res.send('<p>Athugasemd móttekin</p>');
@@ -210,7 +229,7 @@ if(created) {
 return res.render('form', {
     title: 'Formið mitt',
     errors: [{ param: '', msg: 'Gat ekki búið til athugasemd' }],
-    data: { name, email, nationalId, comment },
+    data: { name, description },
   });
 }
 
@@ -219,7 +238,7 @@ app.post('/post', validation, validationResults,sanitazion, postComment);
 
 app.use('/', indexRouter);
 // TODO admin routes
-
+app.use('/admin', adminRouter);
 /** Middleware sem sér um 404 villur. */
 app.use((req, res) => {
   const title = 'Síða fannst ekki';

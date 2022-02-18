@@ -1,25 +1,38 @@
-CREATE TABLE IF NOT EXISTS people (
-  id serial primary key,
-  name varchar(32) not null unique,
-  email varchar(64) not null unique,
-  nationalId varchar(10) not null unique,
-  comment text not null,
-  date timestamp with time zone not null default current_timestamp
-);
-
 CREATE TABLE IF NOT EXISTS users (
   id serial primary key,
   username character varying(64) not null unique,
-  password character varying(255) not null
+  password character varying(256) not null
 );
 
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
+CREATE TABLE IF NOT EXISTS public.events(
+  ID serial,
+  name varchar(64) not null,
+  description text,
+  created timestamp with time zone default NOW(),
+  updated timestamp with time zone default NOW(),
+  CONSTRAINT PK_events PRIMARY KEY(ID)
+);
 
-CREATE TABLE IF NOT EXISTS signatures(
-  id serial primary key,
-  name varchar(128) not null,
-  nationalId varchar(10) not null unique,
-  comment varchar(400) not null,
-  anonymous boolean not null default true,
-  signed timestamp with time zone not null default current_timestamp
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON public.events
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
+CREATE TABLE IF NOT EXISTS public.registration(
+  ID serial,
+  name varchar(64) not null,
+  comment varchar(400),
+  eventid int NOT NULL,
+  created timestamp with time zone default NOW(),
+  PRIMARY KEY (ID),
+  CONSTRAINT FK_EventReg FOREIGN KEY (eventid)
+  REFERENCES events(eventid)
 );

@@ -82,6 +82,7 @@ export async function createComment({ name, email, nationalId, comment }) {
   return result !== null;
 }
 
+
 export async function listComments() {
   const q = 'SELECT * from people';
 
@@ -93,4 +94,33 @@ export async function listComments() {
 
   return [];
 }
+
+export async function createEvent({ name, description }) {
+  const q = `
+    INSERT INTO
+      events(name, description)
+    VALUES
+      ($1, $2)
+    RETURNING *`;
+  const values = [name, description];
+
+  const result = await query(q, values);
+
+  return result !== null;
+}
+
+export async function listEvents() {
+  const q = 'SELECT * from events';
+
+  const result = await query(q);
+
+  if(result) {
+    return result.rows;
+  }
+
+  return [];
+}
+
+
+
 
